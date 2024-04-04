@@ -29,71 +29,108 @@ def print_puzzle(state):
         print(" ".join(map(lambda x: str(x).rjust(2), row)))
     print()
 
+def count_inversions(sequence):
+    inv_count = 0
+    for i in range(len(sequence)):
+        for j in range(i + 1, len(sequence)):
+            if sequence[i] > sequence[j] and sequence[i] != 0 and sequence[j] != 0:
+                inv_count += 1
+    return inv_count
 
-print("Select one of the following options for the initial matrix:")
-print("1. Generate initial matrix randomly")
-print("2. Insert initial matrix manually")
-print("--------------------")
-choice = input("Option: ")
-if choice == "1":
-    initial_matrix = generate_random_matrix()
-elif choice == "2":
-    initial_matrix = insert_manual_matrix()
+def is_solvable(start_matrix, goal_matrix):
+    start_sequence = [tile for row in start_matrix for tile in row]
+    goal_sequence = [tile for row in goal_matrix for tile in row]
+    start_inversions = count_inversions(start_sequence)
+    goal_inversions = count_inversions(goal_sequence)
+    # Check if the parity of the inversion count is the same for both start and goal
+    return (start_inversions % 2) == (goal_inversions % 2)
 
-
-print("--------------------")
-
-
-print("Select one of the following options for the final matrix:")
-print("1. Generate final matrix randomly")
-print("2. Insert final matrix manually")
-print("--------------------")
-choice = input("Option: ")
-if choice == "1":
-    final_matrix = generate_random_matrix()
-elif choice == "2":
-    final_matrix = insert_manual_matrix()
-
-
-print("--------------------")
-print_matrix(initial_matrix, "Initial Matrix")
-print("--------------------")
-print_matrix(final_matrix, "Final Matrix")
+def main_game():
+    while True:
+        print("Select one of the following options for the initial matrix:")
+        print("1. Generate initial matrix randomly")
+        print("2. Insert initial matrix manually")
+        print("--------------------")
+        choice = input("Option: ")
+        if choice == "1":
+            initial_matrix = generate_random_matrix()
+        elif choice == "2":
+            initial_matrix = insert_manual_matrix()
 
 
-print("--------------------")
+        print("--------------------")
 
-# Algorithm selection
-print("Select the algorithm you want to use to solve the puzzle:")
-print("1. BFS")
-print("2. DFS")
-print("3. Greedy Best First")
-print("--------------------")
-choice = input("Option: ")
-print("--------------------")
 
-# Check the user's choice 
-if choice == "1":
-    print("Solving the puzzle using BFS...")
-    path = bfs.bfs_algorithm(initial_matrix, final_matrix)
-    if path is not None:
-        print("Solution found:")
-        for step, state in enumerate(path):
-            print("Step", step + 1)
-            print_puzzle(state)
-    else:
-        print("No solution found.")
-elif choice == "2":
-    print("Solving the puzzle using DFS...")
-    path = dfs.dfs_algorithm(initial_matrix, final_matrix)
-    if path is not None:
-        print("Solution found:")
-        for step, state in enumerate(path):
-            print("Step", step + 1)
-            print_puzzle(state)
-    else:
-        print("No solution found.")
-elif choice == "3":
-    pass
-else:
-    print("Invalid choice. Please choose one of the provided options.")
+        print("Select one of the following options for the final matrix:")
+        print("1. Generate final matrix randomly")
+        print("2. Insert final matrix manually")
+        print("--------------------")
+        choice = input("Option: ")
+        if choice == "1":
+            final_matrix = generate_random_matrix()
+        elif choice == "2":
+            final_matrix = insert_manual_matrix()
+
+
+        print("--------------------")
+        print_matrix(initial_matrix, "Initial Matrix")
+        print("--------------------")
+        print_matrix(final_matrix, "Final Matrix")
+
+
+        print("--------------------")
+
+        if is_solvable(initial_matrix, final_matrix):
+            print("Puzzle is solvable. Proceeding with the chosen algorithm...\n--------------------")
+
+            # Algorithm selection
+            print("Select the algorithm you want to use to solve the puzzle:")
+            print("1. BFS")
+            print("2. DFS")
+            print("3. Greedy Best First")
+            print("--------------------")
+            choice = input("Option: ")
+            print("--------------------")
+            # Check the user's choice 
+            if choice == "1":
+                print("Solving the puzzle using BFS...")
+                path = bfs.bfs_algorithm(initial_matrix, final_matrix)
+                if path is not None:
+                    print("Solution found:")
+                    for step, state in enumerate(path):
+                        print("Step", step + 1)
+                        print_puzzle(state)
+                        print("")
+                break
+            elif choice == "2":
+                print("Solving the puzzle using DFS...")
+                path = dfs.dfs_algorithm(initial_matrix, final_matrix)
+                if path is not None:
+                    print("Solution found:")
+                    for step, state in enumerate(path):
+                        print("Step", step + 1)
+                        print_puzzle(state)
+                        print("")
+                break
+            elif choice == "3":
+                pass
+                break
+            else:
+                print("Invalid choice. Please choose one of the provided options.\n")
+        else:
+            continue_game = True
+            while True:
+                not_solvable = input("Puzzle is not solvable. Do you want to try a different combination? (Y/N): ")
+                if not_solvable.upper() == 'N':
+                    continue_game = False
+                    break
+                elif not_solvable.upper() == 'Y':
+                    break
+                else:
+                    print("Invalid response.\n")
+            
+            if continue_game == False:
+                break
+
+
+main_game()
