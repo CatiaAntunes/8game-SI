@@ -3,18 +3,18 @@ import bfs
 import dfs
 
 def generate_random_matrix():
-    matrix = random.sample(range(1, 9), 8)
-    matrix.insert(7, 0)  # Insert 0 for the empty space
+    matrix = random.sample(range(0, 9), 9)
+    #matrix.insert(7, 0)  # Insert 0 for the empty space
     return [matrix[i:i+3] for i in range(0, len(matrix), 3)]
 
 def insert_manual_matrix():
     while True:
         try:
-            user_input = input("Enter the matrix (without repetitions, separated by commas): ")
+            user_input = input("Enter the matrix (without repetitions, separated by commas, from 0 to 8): ")
             numbers = [int(num) for num in user_input.split(",")]
-            if len(numbers) != 8 or len(set(numbers)) != 8:
-                raise ValueError("Please enter exactly 8 different numbers.")
-            numbers.append(0)  # Add 0 for the empty space
+            if len(numbers) != 9 or len(set(numbers)) != 9:
+                raise ValueError("Please enter exactly 9 different numbers.")
+            #numbers.append(0)  # Add 0 for the empty space
             return [numbers[i:i+3] for i in range(0, len(numbers), 3)]
         except ValueError as e:
             print(e)
