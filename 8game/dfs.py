@@ -28,7 +28,7 @@ def dfs_algorithm(initial_state, final_state):
         if board == final_state:
             return reconstruct_path(board, prev)
         """ Neighbor Exploration
-        Fot each valid move (or 'neighbor') from the current state
+        For each valid move (or 'neighbor') from the current state
         """
         for neighbor in neighbors(board):
             """ Exploration Check

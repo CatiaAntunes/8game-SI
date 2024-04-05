@@ -1,34 +1,79 @@
 
+""" heapq
+The heapq module in Python is part of the standard library and provides an implementation of the heap queue algorithm, also known as the priority queue algorithm
+"""
 import heapq
 
 """ Greedy Best-First Algorithm 
-Implementation of the Greedy Best-First Algorithm function, having as parameters the initial_state and final_state taken as inputs in the main function, on index.py
+Implementation of the Greedy Best-First Algorithm function, having as parameters the initial_state, final_state and heuristic taken as inputs in the main function, on index.py
 """
-def greedy_best_first_search(initial_state, final_state, heuristic='manhattan'):
+def greedy_best_first_search(initial_state, final_state, heuristic):
+    """ Heuristic Selection
+    Selects the heuristic function based on the 'heuristic' parameter. If manhattan is chosen, it uses the manhattan_distance function. Otherwise, it uses hamming_distance
+    It is mandatory in the main function, on index.py, to chose either.
+    """
     heuristic_function = manhattan_distance if heuristic == 'manhattan' else hamming_distance
+    """ Variables/Data Structures Initialization
+    - frontier - empty list named that will be used as a priority queue to store states to be explored, along with their heuristic values
+    - heapq.heappush(...) - adds the initial state to the frontier with a heuristic value of 0, marking the starting point of the search
+    - explored_nodes - is a set that stores the states that have already been visited to prevent revisiting
+    - prev - is a dictionary mapping each state to the state that led to it, helping to reconstruct the path once the final state is found
+    - max_depth
+    """
     frontier = [] 
     heapq.heappush(frontier, (0, initial_state))
     explored_nodes = set() 
     prev = {tuple(map(tuple, initial_state)): None}
 
+    """ Greddy BF Loop 
+    The loop will continue as long as there are states in the 'frontier' to be explored
+    """
     while frontier:
-        current_heuristic, state = heapq.heappop(frontier)
-        if state == final_state:
-            return reconstruct_path(state, prev)
+        """ Lowest Heuristic Value 
+        Removes and returns the state from the frontier with the lowest heuristic value. 
+        This is considered the current state for this iteration of the loop
+        """
+        current_heuristic, board = heapq.heappop(frontier)
+        """ Final State Check
+        If the current state is the goal state, the function reconstructs the path from the initial state to the final state using the 'prev' dictionary and returns it
+        """
+        if board == final_state:
+            return reconstruct_path(board, prev)
 
-        explored_nodes.add(tuple(map(tuple, state)))
+        """ Mark as Explored
+        Adds the current state to the 'explored_nodes' set to mark it as explored
+        """
+        explored_nodes.add(tuple(map(tuple, board)))
 
-        for neighbor in neighbors(state):
-            neighbor_tuple = tuple(map(tuple, neighbor))
-            if neighbor_tuple not in explored_nodes:
-                explored_nodes.add(neighbor_tuple)
-                prev[neighbor_tuple] = tuple(map(tuple, state)) 
+        """ Neighbor Exploration
+        For each valid move (or 'neighbor') from the current state
+        """
+        for neighbor in neighbors(board):
+            """ Exploration Check
+            It checks if the neighbor hasn't been explored yet
+            """
+            if tuple(map(tuple, neighbor)) not in explored_nodes:
+                """ Neighbor Addition
+                The neighbor is added for exploration, marked as explored and current state is recorded as the neighbor's predecessor
+                Adds the neighbor to the frontier along with its heuristic value calculated by the selected heuristic function. This value estimates the cost or distance from the neighbor to the goal state.
+                """
+                explored_nodes.add(tuple(map(tuple, neighbor)))
+                prev[tuple(map(tuple, neighbor))] = tuple(map(tuple, board)) 
                 heapq.heappush(frontier, (heuristic_function(neighbor, final_state), neighbor))
 
     return None 
 
+""" Manhattan Distance
+Calculates the total Manhattan distance between the current state and the goal state for all tiles except the empty tile (0). The Manhattan distance between two points is the sum of the absolute differences of their Cartesian coordinates - in this case, the row and column indices of the tiles.
+It takes the current state and the final_state as parameters
+"""
 def manhattan_distance(state, final_state):
     distance = 0
+    """ Distance Calculation
+    These nested for loops iterate over every tile in the 'state' matrix. i and j are the row and column indices
+    It then checks if the current tile is not the empty tile. If it is, it is not included for calculation
+    Finds the target position (goal_i and goal_j) of the current tile in the final state. It does this by iterating over every tile in the final_state until it finds a tile matching the current tile's value. The next function returns the first matching coordinate.
+    """
     for i in range(len(state)):
         for j in range(len(state[i])):
             if state[i][j] != 0: 
@@ -36,8 +81,17 @@ def manhattan_distance(state, final_state):
                 distance += abs(goal_i - i) + abs(goal_j - j)
     return distance
 
+""" Hamming Distance
+Calculates the number of tiles in the wrong position when comparing the current state to the goal state, excluding the empty tile
+It takes the current state and the final_state as parameters
+"""
 def hamming_distance(state, final_state):
     distance = 0
+    """ Distance Calculation
+    These nested for loops iterate over every tile in the 'state' matrix. i and j are the row and column indices
+    It then checks two conditions for each tile: that it is not the empty tile, and that its value does not match the corresponding tile's value in the final_state. This identifies tiles that are in the wrong position.
+    Increments distance by 1 for each tile found to be in the wrong position.
+    """
     for i in range(len(state)):
         for j in range(len(state[i])):
             if state[i][j] != 0 and state[i][j] != final_state[i][j]:

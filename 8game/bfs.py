@@ -30,7 +30,7 @@ def bfs_algorithm(initial_state, final_state):
         if board == final_state:
             return reconstruct_path(board, prev)
         """ Neighbor Exploration
-        Fot each valid move (or 'neighbor') from the current state
+        For each valid move (or 'neighbor') from the current state
         """
         for neighbor in neighbors(board):
             """ Exploration Check
@@ -42,7 +42,7 @@ def bfs_algorithm(initial_state, final_state):
                 """
                 frontier.append(neighbor)
                 explored_nodes.add(tuple(map(tuple, neighbor)))
-                prev[tuple(map(tuple, neighbor))] = tuple(map(tuple, board))  # Store the previous state
+                prev[tuple(map(tuple, neighbor))] = tuple(map(tuple, board))
                 max_depth = max(max_depth, len(neighbor))
     return None
 
