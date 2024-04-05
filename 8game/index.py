@@ -2,6 +2,8 @@ import random
 import bfs 
 import dfs
 import greedy
+import time
+import tracemalloc
 
 """ Generate Random Matrix
 Generates a random 3x3 matrix that represents the 8 game puzzle
@@ -62,6 +64,11 @@ def is_solvable(start_matrix, goal_matrix):
     goal_inversions = count_inversions(goal_sequence)
     return (start_inversions % 2) == (goal_inversions % 2)
 
+def print_info(start_time, end_time, peak, path):
+    print(f"Max Memory Used (Peak):\t{round((peak/1048576),2)} MB")
+    print(f"Execution Time:\t\t{round(end_time - start_time, 2)} seconds")
+    print(f"Moves needed:\t\t{len(path)} moves")
+
 """ Main Game Loop
 The main game loop that orchestrates user interaction, matrix generation, algorithm selection, and solving the puzzle.
 """
@@ -118,26 +125,38 @@ def main_game():
             """ Checks and executes (if valid) user's choice """
             # BFS
             if choice == "1":
+                start_time = time.time()
+                tracemalloc.start()
                 print("Solving the puzzle using BFS...")
                 path = bfs.bfs_algorithm(initial_matrix, final_matrix)
+                current, peak = tracemalloc.get_traced_memory()  # Capture both current and peak memory
+                tracemalloc.stop()  # Stop memory tracing
+                end_time = time.time()
                 if path is not None:
                     print("Solution found:")
                     for step, state in enumerate(path):
                         print("Step", step + 1)
                         print_puzzle(state)
-                        print("")
+                        print("")     
+                print_info(start_time, end_time, peak, path)              
                 break
             
             # DFS
             elif choice == "2":
+                start_time = time.time()
+                tracemalloc.start()
                 print("Solving the puzzle using DFS...")
                 path = dfs.dfs_algorithm(initial_matrix, final_matrix)
+                current, peak = tracemalloc.get_traced_memory()  # Capture both current and peak memory
+                tracemalloc.stop()  # Stop memory tracing
+                end_time = time.time()
                 if path is not None:
                     print("Solution found:")
                     for step, state in enumerate(path):
                         print("Step", step + 1)
                         print_puzzle(state)
                         print("")
+                print_info(start_time, end_time, peak, path)
                 break
 
             # Greedy BF
@@ -158,13 +177,19 @@ def main_game():
                         print("Invalid choice!")
                 
                 print(f"Solving the puzzle using Greedy Best First Search with {heuristic} heuristic...")
+                start_time = time.time()
+                tracemalloc.start()
                 path = greedy.greedy_best_first_search(initial_matrix, final_matrix, heuristic)
+                current, peak = tracemalloc.get_traced_memory()  # Capture both current and peak memory
+                tracemalloc.stop()  # Stop memory tracing
+                end_time = time.time()
                 if path is not None:
                     print("Solution found:")
                     for step, state in enumerate(path):
                         print("Step", step + 1)
                         print_puzzle(state)
                         print("")
+                print_info(start_time, end_time, peak, path)
                 break
             else:
                 print("Invalid choice. Please choose one of the provided options.\n")
@@ -182,6 +207,5 @@ def main_game():
             
             if continue_game == False:
                 break
-
 
 main_game()
