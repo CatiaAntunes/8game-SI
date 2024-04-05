@@ -1,6 +1,7 @@
 import random
 import bfs 
 import dfs
+import greedy
 
 def generate_random_matrix():
     matrix = random.sample(range(0, 9), 9)
@@ -113,7 +114,28 @@ def main_game():
                         print("")
                 break
             elif choice == "3":
-                pass
+                while True:
+                    print("Select the heuristic for the Greedy Best First Search:")
+                    print("1. Manhattan Distance")
+                    print("2. Hamming Distance")
+                    heuristic_choice = input("Option: ")
+                    if heuristic_choice == "1":
+                        heuristic = "manhattan"
+                        break
+                    elif heuristic_choice == "2":
+                        heuristic = "manhattan"
+                        break
+                    else:
+                        print("Invalid choice!")
+                
+                print(f"Solving the puzzle using Greedy Best First Search with {heuristic} heuristic...")
+                path = greedy.greedy_best_first_search(initial_matrix, final_matrix, heuristic)
+                if path is not None:
+                    print("Solution found:")
+                    for step, state in enumerate(path):
+                        print("Step", step + 1)
+                        print_puzzle(state)
+                        print("")
                 break
             else:
                 print("Invalid choice. Please choose one of the provided options.\n")
