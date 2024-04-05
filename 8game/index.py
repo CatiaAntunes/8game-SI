@@ -3,11 +3,16 @@ import bfs
 import dfs
 import greedy
 
+""" Generate Random Matrix
+Generates a random 3x3 matrix that represents the 8 game puzzle
+"""
 def generate_random_matrix():
     matrix = random.sample(range(0, 9), 9)
-    #matrix.insert(7, 0)  # Insert 0 for the empty space
     return [matrix[i:i+3] for i in range(0, len(matrix), 3)]
 
+""" Create Manual Matrix
+Allows the user to manually input a 3x3 matrix. It validates the input to ensure it contains exactly nune different numbers between 0 and 9
+"""
 def insert_manual_matrix():
     while True:
         try:
@@ -15,21 +20,30 @@ def insert_manual_matrix():
             numbers = [int(num) for num in user_input.split(",")]
             if len(numbers) != 9 or len(set(numbers)) != 9:
                 raise ValueError("Please enter exactly 9 different numbers.")
-            #numbers.append(0)  # Add 0 for the empty space
             return [numbers[i:i+3] for i in range(0, len(numbers), 3)]
         except ValueError as e:
             print(e)
 
+""" Print Matrix
+Prints any given matrix with a tile, formatting it neatly for the console
+"""
 def print_matrix(matrix, title):
     print(title)
     for row in matrix:
         print(" ".join(map(str, row)))
 
+""" Print Puzzle
+Similar to Print Matrix but formats numbers to be right-justified for a uniform appearance
+"""
 def print_puzzle(state):
     for row in state:
         print(" ".join(map(lambda x: str(x).rjust(2), row)))
     print()
 
+""" Count Inversions
+Counts the number of inversions in the puzzle.
+Inversions are pairs of tiles that are in the reverse order from where they ought to be. This count is crucial to determine if the puzzle is solvable
+"""
 def count_inversions(sequence):
     inv_count = 0
     for i in range(len(sequence)):
@@ -38,16 +52,22 @@ def count_inversions(sequence):
                 inv_count += 1
     return inv_count
 
+""" Solvable Puzzle ?
+Determines if the puzzle can be solved by comparing the parity of inversions in the start and final matrices. Puzzles are solvable if and only if the start and final configurations have the same inversion parity.
+"""
 def is_solvable(start_matrix, goal_matrix):
     start_sequence = [tile for row in start_matrix for tile in row]
     goal_sequence = [tile for row in goal_matrix for tile in row]
     start_inversions = count_inversions(start_sequence)
     goal_inversions = count_inversions(goal_sequence)
-    # Check if the parity of the inversion count is the same for both start and goal
     return (start_inversions % 2) == (goal_inversions % 2)
 
+""" Main Game Loop
+The main game loop that orchestrates user interaction, matrix generation, algorithm selection, and solving the puzzle.
+"""
 def main_game():
     while True:
+        """ Initial State Random or Manual """
         print("Select one of the following options for the initial matrix:")
         print("1. Generate initial matrix randomly")
         print("2. Insert initial matrix manually")
@@ -61,7 +81,7 @@ def main_game():
 
         print("--------------------")
 
-
+        """ Final State Random or Manual """
         print("Select one of the following options for the final matrix:")
         print("1. Generate final matrix randomly")
         print("2. Insert final matrix manually")
@@ -72,7 +92,7 @@ def main_game():
         elif choice == "2":
             final_matrix = insert_manual_matrix()
 
-
+        """ Print Both States"""
         print("--------------------")
         print_matrix(initial_matrix, "Initial Matrix")
         print("--------------------")
@@ -81,10 +101,12 @@ def main_game():
 
         print("--------------------")
 
+        """ If Puzzle is Solvable, continue. Else check if the user wants to try a different combination of matrices """
         if is_solvable(initial_matrix, final_matrix):
+
             print("Puzzle is solvable. Proceeding with the chosen algorithm...\n--------------------")
 
-            # Algorithm selection
+            """Algorithm Selection"""
             print("Select the algorithm you want to use to solve the puzzle:")
             print("1. BFS")
             print("2. DFS")
@@ -92,7 +114,9 @@ def main_game():
             print("--------------------")
             choice = input("Option: ")
             print("--------------------")
-            # Check the user's choice 
+            
+            """ Checks and executes (if valid) user's choice """
+            # BFS
             if choice == "1":
                 print("Solving the puzzle using BFS...")
                 path = bfs.bfs_algorithm(initial_matrix, final_matrix)
@@ -103,6 +127,8 @@ def main_game():
                         print_puzzle(state)
                         print("")
                 break
+            
+            # DFS
             elif choice == "2":
                 print("Solving the puzzle using DFS...")
                 path = dfs.dfs_algorithm(initial_matrix, final_matrix)
@@ -113,7 +139,10 @@ def main_game():
                         print_puzzle(state)
                         print("")
                 break
+
+            # Greedy BF
             elif choice == "3":
+                # Heuristic Search
                 while True:
                     print("Select the heuristic for the Greedy Best First Search:")
                     print("1. Manhattan Distance")
