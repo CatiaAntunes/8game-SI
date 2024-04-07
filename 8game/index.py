@@ -111,7 +111,7 @@ def main_game():
         """ If Puzzle is Solvable, continue. Else check if the user wants to try a different combination of matrices """
         if is_solvable(initial_matrix, final_matrix):
 
-            print("Puzzle is solvable. Proceeding with the chosen algorithm...\n--------------------")
+            print("Puzzle is solvable. Proceed by choosing one algorithm...\n--------------------")
 
             """Algorithm Selection"""
             print("Select the algorithm you want to use to solve the puzzle:")
@@ -171,7 +171,7 @@ def main_game():
                         heuristic = "manhattan"
                         break
                     elif heuristic_choice == "2":
-                        heuristic = "manhattan"
+                        heuristic = "hamming"
                         break
                     else:
                         print("Invalid choice!")
