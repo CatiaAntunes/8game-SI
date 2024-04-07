@@ -1,0 +1,15 @@
+A040227_A040737_8game_SI_2024
+
+Instruções de Utilização / Execução
+1. Extrair conteúdos do ficheiro zip 8GAME_SI.zip - isto criará uma pasta chamada 8GAME_SI com quatro ficheiros python: "index.py", "bfs.py", "dfs.py", "greedy.py"
+
+2. Instalar Python - Assegure-se de que tem o Python instalado no seu computador. Este projeto requer a versão 3 do Python, que pode ser descarregada do site oficial https://www.python.org/downloads/
+
+3. Abra a linha de comandos no seu computador e altere o diretório para o mesmo onde extraiu os ficheiros "cd path/to/project_directory"
+3.1. Alternadamente, se tiver instalado um IDE como o Visual Studio Code, abra a pasta do projeto no seu IDE.
+
+4. Na linha de comandos, execute o index.py através do comando "python index.py"
+4.1 Na eventualidade de não serem todos os pacotes/bibliotecas instalados, estes terão de ser instalados pela linha de comandos através do comando "pip install pacote_ou_biblioteca_em_falta"
+
+Outras notas:
+No caso da solução ter mais do que 25 possíveis movimentos, é criado um ficheiro .txt com os estados todos da solução, uma vez que o terminal tem limitações na apresentação de informação. Se for o caso, o ficheiro .txt estará na mesma pasta do projeto
