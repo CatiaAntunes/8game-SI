@@ -4,6 +4,8 @@ import dfs
 import greedy
 import time
 import tracemalloc
+import io
+import sys
 
 """ Generate Random Matrix
 Generates a random 3x3 matrix that represents the 8 game puzzle
@@ -64,10 +66,34 @@ def is_solvable(start_matrix, goal_matrix):
     goal_inversions = count_inversions(goal_sequence)
     return (start_inversions % 2) == (goal_inversions % 2)
 
+""" Print Performance Information """
 def print_info(start_time, end_time, peak, path):
     print(f"Max Memory Used (Peak):\t{round((peak/1048576),2)} MB")
     print(f"Execution Time:\t\t{round(end_time - start_time, 2)} seconds")
     print(f"Moves needed:\t\t{len(path)} moves")
+
+""" Write to a .txt file if #moves does not fit in console """
+def print_and_write_to_file(path, algorithm):
+    with open(f'solution_steps_{algorithm}.txt', 'w') as f:
+        # This block captures prints to a string
+        old_stdout = sys.stdout
+        sys.stdout = mystdout = io.StringIO()
+
+        print("Solution found!")
+        for step, state in enumerate(path):
+            print(f"Step {step + 1}")
+            print_puzzle(state)
+            print("")
+
+        # Reset stdout to its original value
+        sys.stdout = old_stdout
+
+        # Get the string from StringIO object and write it to the file.
+        puzzle_output = mystdout.getvalue()
+        f.write(puzzle_output)
+
+        # Also print the string to the console.
+        print(puzzle_output)
 
 """ Main Game Loop
 The main game loop that orchestrates user interaction, matrix generation, algorithm selection, and solving the puzzle.
@@ -133,11 +159,14 @@ def main_game():
                 tracemalloc.stop()  # Stop memory tracing
                 end_time = time.time()
                 if path is not None:
-                    print("Solution found:")
-                    for step, state in enumerate(path):
-                        print("Step", step + 1)
-                        print_puzzle(state)
-                        print("")     
+                    if len(path) >= 25:
+                        print_and_write_to_file(path, algorithm="BFS")
+                    else:
+                        print("Solution found:")
+                        for step, state in enumerate(path):
+                            print("Step", step + 1)
+                            print_puzzle(state)
+                            print("")     
                 print_info(start_time, end_time, peak, path)              
                 break
             
@@ -151,11 +180,14 @@ def main_game():
                 tracemalloc.stop()  # Stop memory tracing
                 end_time = time.time()
                 if path is not None:
-                    print("Solution found:")
-                    for step, state in enumerate(path):
-                        print("Step", step + 1)
-                        print_puzzle(state)
-                        print("")
+                    if len(path) >= 50:
+                        print_and_write_to_file(path, algorithm="DFS")
+                    else:
+                        print("Solution found:")
+                        for step, state in enumerate(path):
+                            print("Step", step + 1)
+                            print_puzzle(state)
+                            print("") 
                 print_info(start_time, end_time, peak, path)
                 break
 
@@ -184,11 +216,14 @@ def main_game():
                 tracemalloc.stop()  # Stop memory tracing
                 end_time = time.time()
                 if path is not None:
-                    print("Solution found:")
-                    for step, state in enumerate(path):
-                        print("Step", step + 1)
-                        print_puzzle(state)
-                        print("")
+                    if len(path) >= 25:
+                        print_and_write_to_file(path, algorithm=f"Greedy_{heuristic}")
+                    else:
+                        print("Solution found:")
+                        for step, state in enumerate(path):
+                            print("Step", step + 1)
+                            print_puzzle(state)
+                            print("") 
                 print_info(start_time, end_time, peak, path)
                 break
             else:
